@@ -1,0 +1,61 @@
+from tkinter import *
+from tkinter import filedialog
+from moviepy import *
+from moviepy.editor import VideoFileClip
+from pytube import YouTube
+import shutil
+
+
+def select_path():
+    path = filedialog.askdirectory()
+    path_label.config(text=path)
+
+def download_file():
+    get_link = link_field.get()
+    user_path = path_label.cget("text")
+    screen.title("Downloading...")
+    mp4_video = YouTube(get_link).streams.get_highest_resolution().download()
+    video_clip = VideoFileClip(mp4_video)
+    video_clip.close()
+    shutil.move(mp4_video, user_path)
+    screen.title("Download complete!")
+
+
+screen = Tk()
+title = screen.title("Youtube Video Downloader")
+canvas = Canvas(screen, width = 750, height = 750)
+canvas.pack()
+
+screen_img = PhotoImage(file='Download logo.png')
+
+screen_img = screen_img.subsample(2, 2)
+
+canvas.create_image(375, 160, image = screen_img)
+
+link_field = Entry(screen, width = 100)
+link_label = Label(screen, text="Enter Video Link!", font=("Arial", 30) )
+
+path_label = Label(screen, text="Select Folder for Download", font=("Arial", 30))
+select_btn = Button(screen, text="Select", command=select_path)
+
+#Creates label for folder destination
+canvas.create_window(375, 475, window=path_label )
+
+#creates Button on screeen for selecting folder destination
+canvas.create_window(375, 525, window=select_btn )
+
+#creates label on screen
+canvas.create_window(375, 360, window=link_label)
+
+#Creates field for download on screen
+canvas.create_window(375, 400, window=link_field)
+
+#creat download button
+downnload_btn = Button(screen, text="Download File", command=download_file)
+#add download button
+canvas.create_window(375, 430, window=downnload_btn)
+
+
+
+
+screen.mainloop()
